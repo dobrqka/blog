@@ -13,12 +13,7 @@ const createUser = async (req, res) => {
       },
     });
 
-    res.status(201).json({
-      id: newUser.id,
-      email: newUser.email,
-      username: newUser.username,
-      status: newUser.status,
-    });
+    res.status(201).json(newUser);
   } catch (error) {
     if (error.code === "P2002") {
       res.status(400).json({
@@ -87,10 +82,9 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const userId = Number(req.params.id);
     await prisma.user.delete({
       where: {
-        id: userId,
+        id: Number(req.params.id),
       },
     });
     res.status(204).send();
