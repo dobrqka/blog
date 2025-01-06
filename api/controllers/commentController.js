@@ -2,7 +2,7 @@ const prisma = require("../models/prismaClient");
 
 const createComment = async (req, res) => {
   const { content } = req.body;
-  const postId = 2; // hard-coded - replace with the actual post ID
+  const postId = Number(req.params.postId);
 
   const post = await prisma.post.findUnique({
     where: { id: postId },
@@ -53,6 +53,36 @@ const getCommentById = async (req, res) => {
   }
 };
 
+const getCommentsByPost = async (req, res) => {
+  try {
+    const comments = await prisma.comment.findMany({
+      where: {
+        postId: Number(req.params.postId),
+      },
+    });
+    res.json(comments);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Failed fetching comments", details: error.message });
+  }
+};
+
+const getCommentsByUser = async (req, res) => {
+  try {
+    const comments = await prisma.comment.findMany({
+      where: {
+        postId: Number(req.params.userId),
+      },
+    });
+    res.json(comments);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Failed fetching comments", details: error.message });
+  }
+};
+
 const updateComment = async (req, res) => {
   try {
     const updatedComment = await prisma.comment.update({
@@ -90,4 +120,6 @@ module.exports = {
   getCommentById,
   updateComment,
   deleteComment,
+  getCommentsByPost,
+  getCommentsByUser,
 };

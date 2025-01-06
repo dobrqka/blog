@@ -1,7 +1,7 @@
 const prisma = require("../models/prismaClient");
 
 const createPost = async (req, res) => {
-  const ownerId = 2; // mock ID - replace with ID of authenticated user
+  const ownerId = 3; // mock ID - replace with ID of authenticated user
   const { title, content, status } = req.body;
   try {
     const newPost = await prisma.post.create({
@@ -46,6 +46,21 @@ const getPostById = async (req, res) => {
   }
 };
 
+const getPostsByUser = async (req, res) => {
+  try {
+    const posts = await prisma.post.findMany({
+      where: {
+        ownerId: Number(req.params.userId),
+      },
+    });
+    res.json(posts);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Error fetching posts", details: error.message });
+  }
+};
+
 const updatePost = async (req, res) => {
   try {
     const { title, content, status, comments } = req.body;
@@ -86,4 +101,11 @@ const deletePost = async (req, res) => {
   }
 };
 
-module.exports = { createPost, getPosts, getPostById, updatePost, deletePost };
+module.exports = {
+  createPost,
+  getPosts,
+  getPostById,
+  updatePost,
+  deletePost,
+  getPostsByUser,
+};
