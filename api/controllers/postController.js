@@ -4,7 +4,6 @@ const createPost = async (req, res) => {
   const { title, content, status } = req.body;
   try {
     const ownerId = req.user.id;
-
     const newPost = await prisma.post.create({
       data: {
         ownerId,
@@ -65,21 +64,36 @@ const getPostsByUser = async (req, res) => {
 const updatePost = async (req, res) => {
   try {
     const { title, content, status, comments } = req.body;
-    let updatedPost;
+    const postId = Number(req.params.id);
+    const userId = req.user.id;
+    const post = await prisma.post.findUnique({ where: { id: postId } });
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    if (post.ownerId !== userId) {
+      return res
+        .status(403)
+        .json({ error: "You are not the owner of this post" });
+    }
 
     const updateData = {};
+    let updatedPost;
+
     if (title) updateData.title = title;
     if (content) updateData.content = content;
     if (status) updateData.status = status;
     if (comments) updateData.comments = comments;
 
     if (Object.keys(updateData).length > 0) {
-      const updatedPost = await prisma.post.update({
-        where: { id: Number(req.params.id) },
+      updatedPost = await prisma.post.update({
+        where: { id: postId },
         data: updateData,
       });
+      return res.json(updatedPost);
     }
-    res.json(updatedPost);
+    return res.json(post);
   } catch (error) {
     res
       .status(500)
@@ -89,9 +103,23 @@ const updatePost = async (req, res) => {
 
 const deletePost = async (req, res) => {
   try {
+    const postId = Number(req.params.id);
+    const userId = req.user.id;
+    const post = await prisma.post.findUnique({ where: { id: postId } });
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    if (post.ownerId !== userId) {
+      return res
+        .status(403)
+        .json({ error: "You are not the owner of this post" });
+    }
+
     await prisma.post.delete({
       where: {
-        id: Number(req.params.id),
+        id: postId,
       },
     });
     res.status(204).send();

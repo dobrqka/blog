@@ -15,12 +15,19 @@ const {
 } = require("../controllers/commentController");
 const passport = require("../config/passport");
 
-// router.post("/", createPost); // unprotected route
-router.post("/", passport.authenticate("jwt", { session: false }), createPost); // protected
+router.post("/", passport.authenticate("jwt", { session: false }), createPost);
 router.get("/", getPosts);
 router.get("/:id", getPostById);
-router.put("/:id", updatePost);
-router.delete("/:id", deletePost);
+router.put(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  updatePost
+);
+router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  deletePost
+);
 
 router.post("/:postId/comments", createComment);
 router.get("/:postId/comments", getCommentsByPost);
