@@ -1,9 +1,10 @@
 const prisma = require("../models/prismaClient");
 
 const createPost = async (req, res) => {
-  const ownerId = 3; // mock ID - replace with ID of authenticated user
   const { title, content, status } = req.body;
   try {
+    const ownerId = req.user.id;
+
     const newPost = await prisma.post.create({
       data: {
         ownerId,
