@@ -1,4 +1,20 @@
 const prisma = require("../models/prismaClient");
+const { body, validationResult } = require("express-validator");
+
+const validateComment = [
+  body("content")
+    .isString()
+    .withMessage("Content must be a string")
+    .notEmpty()
+    .withMessage("Content cannot be empty"),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
+];
 
 const createComment = async (req, res) => {
   const { content } = req.body;
@@ -85,9 +101,28 @@ const getCommentsByUser = async (req, res) => {
 
 const updateComment = async (req, res) => {
   try {
+    const commentId = Number(req.params.id);
+    const authenticatedUserId = req.user.id;
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+
+    if (!comment) {
+      return res.status(404).json({ error: "Comment not found" });
+    }
+
+    const userId = comment.userId;
+
+    if (userId !== authenticatedUserId) {
+      return res.status(403).json({
+        error:
+          "You are not authorized to update this comment. Only the owner can perform this action.",
+      });
+    }
+
     const updatedComment = await prisma.comment.update({
       where: {
-        id: Number(req.params.id),
+        id: commentId,
       },
       data: {
         content: req.body.content,
@@ -103,8 +138,28 @@ const updateComment = async (req, res) => {
 
 const deleteComment = async (req, res) => {
   try {
+    const commentId = Number(req.params.id);
+    const authenticatedUserId = req.user.id;
+    const authenticatedUserStatus = req.user.status;
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+
+    if (!comment) {
+      return res.status(404).json({ error: "Comment not found" });
+    }
+
+    const userId = comment.userId;
+
+    if (userId !== authenticatedUserId && authenticatedUserStatus !== "ADMIN") {
+      return res.status(403).json({
+        error:
+          "You are not authorized to delete this comment. Only the owner or an admin can perform this action.",
+      });
+    }
+
     await prisma.comment.delete({
-      where: { id: Number(req.params.id) },
+      where: { id: commentId },
     });
     res.status(204).send();
   } catch (error) {
@@ -122,4 +177,5 @@ module.exports = {
   deleteComment,
   getCommentsByPost,
   getCommentsByUser,
+  validateComment,
 };
