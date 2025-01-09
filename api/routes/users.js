@@ -6,17 +6,19 @@ const {
   getUserById,
   updateUser,
   deleteUser,
+  validateUser,
 } = require("../controllers/userController");
 const { getCommentsByUser } = require("../controllers/commentController");
 const { getPostsByUser } = require("../controllers/postController");
 const passport = require("../config/passport");
 
-router.post("/", createUser);
+router.post("/", validateUser, createUser);
 router.get("/", passport.authenticate("jwt", { session: false }), getUsers);
 router.get("/:id", getUserById);
 router.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
+  validateUser,
   updateUser
 );
 router.delete(

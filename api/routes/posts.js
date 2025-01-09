@@ -6,21 +6,29 @@ const {
   getPostById,
   updatePost,
   deletePost,
+  validatePost,
 } = require("../controllers/postController");
 const {
   createComment,
   getCommentsByPost,
   updateComment,
   deleteComment,
+  validateComment,
 } = require("../controllers/commentController");
 const passport = require("../config/passport");
 
-router.post("/", passport.authenticate("jwt", { session: false }), createPost);
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  validatePost,
+  createPost
+);
 router.get("/", getPosts);
 router.get("/:id", getPostById);
 router.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
+  validatePost,
   updatePost
 );
 router.delete(
@@ -29,9 +37,23 @@ router.delete(
   deletePost
 );
 
-router.post("/:postId/comments", createComment);
+router.post(
+  "/:postId/comments",
+  passport.authenticate("jwt", { session: false }),
+  validateComment,
+  createComment
+);
 router.get("/:postId/comments", getCommentsByPost);
-router.put("/:postId/comments/:id", updateComment);
-router.delete("/:postId/comments/:id", deleteComment);
+router.put(
+  "/:postId/comments/:id",
+  passport.authenticate("jwt", { session: false }),
+  validateComment,
+  updateComment
+);
+router.delete(
+  "/:postId/comments/:id",
+  passport.authenticate("jwt", { session: false }),
+  deleteComment
+);
 
 module.exports = router;

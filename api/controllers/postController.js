@@ -1,4 +1,34 @@
 const prisma = require("../models/prismaClient");
+const { body, validationResult } = require("express-validator");
+
+const validatePost = [
+  body("title")
+    .isString()
+    .withMessage("Title must be a string")
+    .notEmpty()
+    .withMessage("Title is required")
+    .isLength({ max: 255 })
+    .withMessage("Title cannot exceed 255 characters"),
+
+  body("content")
+    .isString()
+    .withMessage("Content must be a string")
+    .notEmpty()
+    .withMessage("Content is required"),
+
+  body("status")
+    .optional()
+    .isIn(["PUBLISHED", "UNPUBLISHED"])
+    .withMessage("Invalid status value"),
+
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
+];
 
 const createPost = async (req, res) => {
   const { title, content, status } = req.body;
@@ -137,4 +167,5 @@ module.exports = {
   updatePost,
   deletePost,
   getPostsByUser,
+  validatePost,
 };

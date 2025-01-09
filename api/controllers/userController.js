@@ -1,5 +1,38 @@
 const prisma = require("../models/prismaClient");
 const bcrypt = require("bcrypt");
+const { body, validationResult } = require("express-validator");
+
+const validateUser = [
+  body("email")
+    .isEmail()
+    .withMessage("Please provide a valid email")
+    .notEmpty()
+    .withMessage("Email is required"),
+
+  body("password")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters long")
+    .notEmpty()
+    .withMessage("Password is required"),
+
+  body("username")
+    .optional()
+    .isAlphanumeric()
+    .withMessage("Username must be alphanumeric"),
+
+  body("status")
+    .optional()
+    .isIn(["USER", "ADMIN"])
+    .withMessage("Invalid status value"),
+
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
+];
 
 const createUser = async (req, res) => {
   const { email, password, username, status } = req.body;
@@ -44,16 +77,14 @@ const getUsers = async (req, res) => {
 const getUserById = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
-      where: {
-        id: Number(req.params.id),
-      },
+      where: { id: Number(req.params.id) },
       select: {
-        id,
-        email,
-        username,
-        status,
-        posts,
-        comments,
+        id: true,
+        email: true,
+        username: true,
+        status: true,
+        posts: true,
+        comments: true,
       },
     });
     res.json(user);
@@ -154,4 +185,11 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { createUser, getUsers, getUserById, updateUser, deleteUser };
+module.exports = {
+  createUser,
+  getUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
+  validateUser,
+};
