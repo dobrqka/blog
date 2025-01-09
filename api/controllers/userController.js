@@ -82,12 +82,32 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
+    if (status === "ADMIN" && authenticatedUserStatus !== "ADMIN") {
+      return res.status(403).json({
+        error: "You are not authorized to change the status to ADMIN",
+      });
+    }
+
+    if (
+      user.status === "ADMIN" &&
+      status !== "ADMIN" &&
+      authenticatedUserStatus === "ADMIN"
+    ) {
+      return res.status(403).json({
+        error:
+          "Admins cannot change status from ADMIN to USER or any other role",
+      });
+    }
+
     let updatedUser;
     const updateData = {};
     if (email) updateData.email = email;
     if (password) updateData.password = await bcrypt.hash(password, 10);
     if (username) updateData.username = username;
-    if (status) updateData.status = status;
+    // if (status) updateData.status = status;
+    if (status && status === "ADMIN" && authenticatedUserStatus === "ADMIN") {
+      updateData.status = status;
+    }
 
     if (Object.keys(updateData).length > 0) {
       updatedUser = await prisma.user.update({
