@@ -47,6 +47,14 @@ const getUserById = async (req, res) => {
       where: {
         id: Number(req.params.id),
       },
+      select: {
+        id,
+        email,
+        username,
+        status,
+        posts,
+        comments,
+      },
     });
     res.json(user);
   } catch (error) {
@@ -59,12 +67,25 @@ const getUserById = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const userId = Number(req.params.id);
+    const authenticatedUserId = req.user.id;
+    const authenticatedUserStatus = req.user.status;
     const { email, password, username, status } = req.body;
-    let updatedUser;
+    const user = await prisma.user.findUnique({ where: { id: userId } });
 
+    if (userId !== authenticatedUserId && authenticatedUserStatus !== "ADMIN") {
+      return res
+        .status(403)
+        .json({ error: "You are not authorized to update this account" });
+    }
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    let updatedUser;
     const updateData = {};
     if (email) updateData.email = email;
-    if (password) updateData.password = password;
+    if (password) updateData.password = await bcrypt.hash(password, 10);
     if (username) updateData.username = username;
     if (status) updateData.status = status;
 
@@ -85,9 +106,24 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
+    const userId = Number(req.params.id);
+    const authenticatedUserId = req.user.id;
+    const authenticatedUserStatus = req.user.status;
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+
+    if (userId !== authenticatedUserId && authenticatedUserStatus !== "ADMIN") {
+      return res
+        .status(403)
+        .json({ error: "You are not authorized to delete this account" });
+    }
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
     await prisma.user.delete({
       where: {
-        id: Number(req.params.id),
+        id: userId,
       },
     });
     res.status(204).send();
