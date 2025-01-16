@@ -7,7 +7,7 @@ const passport = require("./config/passport");
 
 app.use(
   cors({
-    origin: "http://localhost:5174", // Replace with your frontend URL
+    origin: "http://localhost:5173", // Replace with your frontend URL
   })
 );
 app.use(express.json());
