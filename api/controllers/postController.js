@@ -21,6 +21,12 @@ const validatePost = [
     .isIn(["PUBLISHED", "UNPUBLISHED"])
     .withMessage("Invalid status value"),
 
+  body("thumbnail")
+    .isString()
+    .withMessage("Thumbnail must be a string URL")
+    .notEmpty()
+    .withMessage("Thumbnail is required"),
+
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -31,7 +37,7 @@ const validatePost = [
 ];
 
 const createPost = async (req, res) => {
-  const { title, content, status } = req.body;
+  const { title, content, status, thumbnail } = req.body;
   try {
     const ownerId = req.user.id;
     const newPost = await prisma.post.create({
@@ -40,6 +46,7 @@ const createPost = async (req, res) => {
         title,
         content,
         status: status || "UNPUBLISHED",
+        thumbnail,
       },
     });
     res.status(201).json(newPost);
@@ -93,7 +100,7 @@ const getPostsByUser = async (req, res) => {
 
 const updatePost = async (req, res) => {
   try {
-    const { title, content, status, comments } = req.body;
+    const { title, content, status, comments, thumbnail } = req.body;
     const postId = Number(req.params.id);
     const userId = req.user.id;
     const post = await prisma.post.findUnique({ where: { id: postId } });
@@ -115,6 +122,7 @@ const updatePost = async (req, res) => {
     if (content) updateData.content = content;
     if (status) updateData.status = status;
     if (comments) updateData.comments = comments;
+    if (thumbnail) updateData.thumbnail = thumbnail;
 
     if (Object.keys(updateData).length > 0) {
       updatedPost = await prisma.post.update({

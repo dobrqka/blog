@@ -75,6 +75,14 @@ const getCommentsByPost = async (req, res) => {
       where: {
         postId: Number(req.params.postId),
       },
+      include: {
+        user: {
+          select: {
+            email: true,
+            username: true,
+          },
+        },
+      },
     });
     res.json(comments);
   } catch (error) {

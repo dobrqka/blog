@@ -28,7 +28,6 @@ router.get("/:id", getPostById);
 router.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
-  validatePost,
   updatePost
 );
 router.delete(

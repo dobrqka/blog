@@ -5,13 +5,12 @@ import PostThumbnail from "./PostThumbnail";
 const HomePage = () => {
   const [recentPost, setRecentPost] = useState({ title: "", content: "" });
   const [allPosts, setAllPosts] = useState([]);
+  const apiUrl = "http://localhost:3002/api/";
 
   useEffect(() => {
     const fetchRecentPost = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:3000/api/posts?limit=1&sort=desc"
-        );
+        const response = await fetch(`${apiUrl}posts?limit=1&sort=desc`);
         const data = await response.json();
         if (data.length > 0) {
           setRecentPost({ ...data[0] });
@@ -26,7 +25,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchAllPosts = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/posts");
+        const response = await fetch(`${apiUrl}posts`);
         const data = await response.json();
         if (data.length > 0) {
           setAllPosts(data);
@@ -53,6 +52,8 @@ const HomePage = () => {
             <PostThumbnail
               title={recentPost.title}
               content={recentPost.content.slice(0, 40)}
+              apiUrl={apiUrl}
+              thumbnail={recentPost.thumbnail}
             />
           </Link>
         </section>
