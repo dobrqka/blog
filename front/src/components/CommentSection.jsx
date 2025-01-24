@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-const CommentSection = ({ apiUrl }) => {
+const CommentSection = () => {
   const [comments, setComments] = useState([]);
-  const endPoint = apiUrl || "http://localhost:3002/api/";
   const { id } = useParams();
 
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await fetch(`${endPoint}posts/${id}/comments`);
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/posts/${id}/comments`
+        );
         const data = await response.json();
         setComments(data);
       } catch (error) {

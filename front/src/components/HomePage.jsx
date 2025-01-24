@@ -1,16 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import PostThumbnail from "./PostThumbnail";
+import { AuthContext } from "../contexts/AuthContext.jsx";
 
 const HomePage = () => {
   const [recentPost, setRecentPost] = useState({ title: "", content: "" });
   const [allPosts, setAllPosts] = useState([]);
-  const apiUrl = "http://localhost:3002/api/";
+  const { isAuthenticated, user, logout } = useContext(AuthContext);
+  console.log(user);
 
   useEffect(() => {
     const fetchRecentPost = async () => {
       try {
-        const response = await fetch(`${apiUrl}posts?limit=1&sort=desc`);
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/posts?limit=1&sort=desc`
+        );
         const data = await response.json();
         if (data.length > 0) {
           setRecentPost({ ...data[0] });
@@ -25,7 +29,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchAllPosts = async () => {
       try {
-        const response = await fetch(`${apiUrl}posts`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/posts`);
         const data = await response.json();
         if (data.length > 0) {
           setAllPosts(data);
@@ -43,16 +47,25 @@ const HomePage = () => {
       <h1 className="text-4xl font-extrabold text-center text-blue-600 mb-8">
         Welcome to the Blog
       </h1>
-      <Link to="/login">
-        <button className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-          Login
-        </button>
-      </Link>
-      <Link to="/register">
-        <button className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-          Register
-        </button>
-      </Link>
+      {isAuthenticated ? (
+        <div>
+          <h1>Welcome, {user.email}!</h1>
+          <button onClick={logout}>Logout</button>
+        </div>
+      ) : (
+        <div>
+          <Link to="/login">
+            <button className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+              Login
+            </button>
+          </Link>
+          <Link to="/register">
+            <button className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+              Register
+            </button>
+          </Link>
+        </div>
+      )}
       <div className="space-y-10">
         <section className="bg-blue-100 p-6 rounded-lg shadow-lg">
           <h2 className="text-2xl font-semibold text-blue-700 mb-4">
@@ -62,7 +75,6 @@ const HomePage = () => {
             <PostThumbnail
               title={recentPost.title}
               content={recentPost.content.slice(0, 40)}
-              apiUrl={apiUrl}
               thumbnail={recentPost.thumbnail}
             />
           </Link>

@@ -4,16 +4,16 @@ import BackButton from "./BackButton";
 import CommentSection from "./CommentSection";
 import { Link } from "react-router-dom";
 
-const Post = ({ title, content, apiUrl }) => {
+const Post = ({ title, content }) => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
-
-  const endPoint = apiUrl || "http://localhost:3002/api/";
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`${endPoint}posts/${id}`);
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/posts/${id}`
+        );
         const data = await response.json();
         setPost(data);
       } catch (error) {
