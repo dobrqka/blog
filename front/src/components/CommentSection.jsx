@@ -59,6 +59,34 @@ const CommentSection = () => {
     }
   };
 
+  const handleEdit = (id) => {};
+
+  const handleDelete = async (commentId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/posts/${id}/comments/${commentId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        setComments((prevComments) =>
+          prevComments.filter((comment) => comment.id !== commentId)
+        );
+        console.log("Comment deleted successfully");
+      } else {
+        console.error("Failed to delete comment: ", await response.json());
+      }
+    } catch (error) {
+      console.error("Error deleting comment: ", error);
+    }
+  };
+
   return (
     <div className="max-w-xl mx-auto p-6 bg-gray-100 rounded-lg shadow-md">
       <div className="space-y-4">
@@ -71,6 +99,22 @@ const CommentSection = () => {
             <p className="text-sm text-gray-400 mt-1">
               {comment.createdAt.slice(0, 10)}
             </p>
+            {isAuthenticated && comment.userId === user.id && (
+              <div className="mt-2 flex justify-center space-x-4">
+                <button
+                  onClick={() => handleEdit(comment.id)}
+                  className="text-blue-500 hover:text-blue-700"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(comment.id)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  Delete
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -78,7 +122,8 @@ const CommentSection = () => {
       <div className="mt-6">
         {isAuthenticated ? (
           <textarea
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border rounded-lg focus:outline-none
+            focus:ring-2 focus:ring-blue-500"
             rows="3"
             placeholder="Write a comment..."
             onChange={(e) => {

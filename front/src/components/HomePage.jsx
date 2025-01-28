@@ -42,40 +42,46 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-4xl font-extrabold text-center text-blue-600 mb-8">
-        Welcome to the Blog
-      </h1>
-      {isAuthenticated ? (
-        <div>
-          <h1>Welcome, {user.email}!</h1>
-          <button
-            onClick={logout}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
-          >
-            Logout
-          </button>
-          <Link to="/new-post">
-            <button className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-              New Post
+    <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen space-y-10">
+      <header className="text-center">
+        <h1 className="text-4xl font-extrabold text-blue-600 mb-6">
+          Welcome to the Blog
+        </h1>
+        {isAuthenticated ? (
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <h2 className="text-lg font-medium text-gray-700">
+              Welcome, {user.email}!
+            </h2>
+            <button
+              onClick={logout}
+              className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            >
+              Logout
             </button>
-          </Link>
-        </div>
-      ) : (
-        <div>
-          <Link to="/login">
-            <button className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-              Login
-            </button>
-          </Link>
-          <Link to="/register">
-            <button className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-              Register
-            </button>
-          </Link>
-        </div>
-      )}
-      <div className="space-y-10">
+            <Link to="/new-post">
+              <button className="px-4 py-2 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300">
+                New Post
+              </button>
+            </Link>
+          </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <Link to="/login">
+              <button className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                Login
+              </button>
+            </Link>
+            <Link to="/register">
+              <button className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                Register
+              </button>
+            </Link>
+          </div>
+        )}
+      </header>
+
+      <main className="space-y-10">
+        {/* Most Recent Post Section */}
         <section className="bg-blue-100 p-6 rounded-lg shadow-lg">
           <h2 className="text-2xl font-semibold text-blue-700 mb-4">
             Most Recent Post
@@ -88,6 +94,8 @@ const HomePage = () => {
             />
           </Link>
         </section>
+
+        {/* Previous Posts Section */}
         <section className="bg-gray-100 p-6 rounded-lg shadow-lg">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
             Previous Posts
@@ -107,7 +115,7 @@ const HomePage = () => {
             ))}
           </div>
         </section>
-      </div>
+      </main>
     </div>
   );
 };
