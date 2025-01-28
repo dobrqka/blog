@@ -34,7 +34,15 @@ const createComment = async (req, res) => {
       data: {
         content,
         postId,
-        userId: post.ownerId,
+        userId: req.user.id,
+      },
+      include: {
+        user: {
+          select: {
+            email: true,
+            username: true,
+          },
+        },
       },
     });
     res.status(201).json(newComment);

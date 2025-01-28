@@ -1,12 +1,14 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import BackButton from "./BackButton";
 import CommentSection from "./CommentSection";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../contexts/AuthContext.jsx";
 
 const Post = ({ title, content }) => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
+  const { isAuthenticated, user, logout } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -28,16 +30,30 @@ const Post = ({ title, content }) => {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <BackButton text={"Back"} />
-      <Link to="/login">
-        <button className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-          Login
-        </button>
-      </Link>
-      <Link to="/register">
-        <button className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-          Register
-        </button>
-      </Link>
+      {isAuthenticated ? (
+        <div>
+          <h1>Welcome, {user.email}!</h1>
+          <button
+            onClick={logout}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+          >
+            Logout
+          </button>
+        </div>
+      ) : (
+        <div>
+          <Link to="/login">
+            <button className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+              Login
+            </button>
+          </Link>
+          <Link to="/register">
+            <button className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+              Register
+            </button>
+          </Link>
+        </div>
+      )}
       <h1 className="text-3xl font-bold">{post.title}</h1>
       <img className="post-image" src={post.thumbnail}></img>
       <p>{post.content}</p>

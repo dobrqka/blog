@@ -7,7 +7,6 @@ const HomePage = () => {
   const [recentPost, setRecentPost] = useState({ title: "", content: "" });
   const [allPosts, setAllPosts] = useState([]);
   const { isAuthenticated, user, logout } = useContext(AuthContext);
-  console.log(user);
 
   useEffect(() => {
     const fetchRecentPost = async () => {
@@ -50,7 +49,17 @@ const HomePage = () => {
       {isAuthenticated ? (
         <div>
           <h1>Welcome, {user.email}!</h1>
-          <button onClick={logout}>Logout</button>
+          <button
+            onClick={logout}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+          >
+            Logout
+          </button>
+          <Link to="/new-post">
+            <button className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+              New Post
+            </button>
+          </Link>
         </div>
       ) : (
         <div>
