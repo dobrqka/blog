@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext.jsx";
+import Comment from "./comment";
 
 const CommentSection = () => {
   const [comments, setComments] = useState([]);

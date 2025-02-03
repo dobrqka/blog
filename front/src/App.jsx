@@ -5,6 +5,7 @@ import Post from "./components/Post.jsx";
 import LoginForm from "./components/LoginForm.jsx";
 import Register from "./components/Register.jsx";
 import PostCreate from "./components/PostCreate.jsx";
+import PostEdit from "./components/PostEdit.jsx";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<Register />} />
         <Route path="/new-post" element={<PostCreate />} />
+        <Route path="/edit-post/:id" element={<PostEdit />} />
       </Routes>
     </Router>
   );
