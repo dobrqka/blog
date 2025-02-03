@@ -46,7 +46,7 @@ model Comment {
 }
 
 enum UserStatus {
-  AUTHOR
+  ADMIN
   USER
 }
 

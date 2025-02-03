@@ -17,6 +17,7 @@ const verifyToken = async (req, res) => {
         id: true,
         username: true,
         email: true,
+        status: true,
       },
     });
 
