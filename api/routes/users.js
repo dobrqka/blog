@@ -18,7 +18,6 @@ router.get("/:id", getUserById);
 router.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
-  validateUser,
   updateUser
 );
 router.delete(
