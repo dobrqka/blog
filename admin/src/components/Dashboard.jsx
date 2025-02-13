@@ -1,10 +1,12 @@
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../contexts/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAllPosts = async () => {
@@ -147,7 +149,15 @@ const Dashboard = () => {
       {isAuthenticated && user.status === "ADMIN" ? (
         <div className="max-w-4xl mx-auto p-6 bg-gray-100 rounded-lg shadow-md">
           <h1 className="text-2xl font-bold mb-4">Hi, Admin!</h1>
-
+          <button
+            onClick={() => {
+              logout();
+              navigate("/");
+            }}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+          >
+            Logout
+          </button>
           <div className="mb-6">
             <h2 className="text-xl font-semibold mb-2">All Users</h2>
             {users.length > 0 ? (
