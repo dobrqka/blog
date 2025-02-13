@@ -92,6 +92,28 @@ const Dashboard = () => {
     }
   };
 
+  const deletePost = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/posts/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+      if (data.length > 0) {
+        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
+      }
+    } catch (error) {
+      console.error("Error deleting post.", error);
+    }
+  };
+
   return (
     <>
       {isAuthenticated && user.status === "ADMIN" ? (
@@ -146,7 +168,10 @@ const Dashboard = () => {
                   >
                     <span>{post.title}</span>
                     <div className="flex space-x-2">
-                      <button className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                      <button
+                        onClick={() => deletePost(post.id)}
+                        className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                      >
                         Delete
                       </button>
                       <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
