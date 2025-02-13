@@ -98,7 +98,7 @@ const getUserById = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const userId = Number(req.params.id);
-    const authenticatedUserId = req.user.id;
+    const authenticatedUserId = Number(req.user.id);
     const authenticatedUserStatus = req.user.status;
     const { email, password, username, status } = req.body;
     const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -108,7 +108,6 @@ const updateUser = async (req, res) => {
         .status(403)
         .json({ error: "You are not authorized to update this account" });
     }
-
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -121,6 +120,7 @@ const updateUser = async (req, res) => {
 
     if (
       user.status === "ADMIN" &&
+      status !== undefined &&
       status !== "ADMIN" &&
       authenticatedUserStatus === "ADMIN"
     ) {
@@ -133,7 +133,9 @@ const updateUser = async (req, res) => {
     let updatedUser;
     const updateData = {};
     if (email) updateData.email = email;
-    if (password) updateData.password = await bcrypt.hash(password, 10);
+    if (password) {
+      updateData.password = await bcrypt.hash(password, 10);
+    }
     if (username) updateData.username = username;
     // if (status) updateData.status = status;
     if (status && status === "ADMIN" && authenticatedUserStatus === "ADMIN") {

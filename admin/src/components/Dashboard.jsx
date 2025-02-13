@@ -114,6 +114,34 @@ const Dashboard = () => {
     }
   };
 
+  const changePassword = async (id) => {
+    const newPassword = prompt("Enter new password:");
+    if (!newPassword) return;
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/users/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ password: newPassword }),
+        }
+      );
+
+      if (response.ok) {
+        alert("Password updated successfully.");
+      } else {
+        alert("Failed to update password.");
+      }
+    } catch (error) {
+      console.error("Error changing password.", error);
+      alert("An error occurred.");
+    }
+  };
+
   return (
     <>
       {isAuthenticated && user.status === "ADMIN" ? (
@@ -131,7 +159,10 @@ const Dashboard = () => {
                   >
                     <span>{user.email}</span>
                     <div className="flex space-x-2">
-                      <button className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                      <button
+                        onClick={() => changePassword(user.id)}
+                        className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                      >
                         Change Password
                       </button>
                       <button
