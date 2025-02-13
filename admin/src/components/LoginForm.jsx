@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+// import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
@@ -6,6 +7,7 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  // const { isAuthenticated, user, logout } = useContext(AuthContext);
 
   const loginUser = async (e) => {
     e.preventDefault();
@@ -22,6 +24,8 @@ const LoginForm = () => {
 
       if (response.ok) {
         localStorage.setItem("token", data.token);
+        // setUser(data.user);
+        // setIsAuthenticated(true);
         navigate("/dashboard");
       } else {
         setError(data.message || "Login failed");

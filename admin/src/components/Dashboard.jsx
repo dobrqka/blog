@@ -6,6 +6,8 @@ const Dashboard = () => {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
+  const [comments, setComments] = useState({});
+  const [visibleComments, setVisibleComments] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -144,6 +146,43 @@ const Dashboard = () => {
     }
   };
 
+  const toggleComments = async (postId) => {
+    if (visibleComments[postId]) {
+      setVisibleComments((prev) => ({ ...prev, [postId]: false }));
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/posts/${postId}/comments`
+      );
+      const data = await response.json();
+      setComments((prev) => ({ ...prev, [postId]: data }));
+      setVisibleComments((prev) => ({ ...prev, [postId]: true }));
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+
+  const deleteComment = async (postId, commentId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await fetch(`${import.meta.env.VITE_API_URL}/comments/${commentId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setComments((prev) => ({
+        ...prev,
+        [postId]: prev[postId].filter((comment) => comment.id !== commentId),
+      }));
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
+
   return (
     <>
       {isAuthenticated && user.status === "ADMIN" ? (
@@ -215,10 +254,39 @@ const Dashboard = () => {
                       >
                         Delete
                       </button>
-                      <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
-                        Show Comments
+                      <button
+                        onClick={() => toggleComments(post.id)}
+                        className="px-3 py-1 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
+                      >
+                        {visibleComments[post.id]
+                          ? "Hide Comments"
+                          : "Show Comments"}
                       </button>
                     </div>
+                    {visibleComments[post.id] && (
+                      <ul className="mt-2 text-sm text-gray-600">
+                        {comments[post.id]?.length > 0 ? (
+                          comments[post.id].map((c) => (
+                            <li
+                              key={c.id}
+                              className="pl-4 border-l-2 border-gray-300"
+                            >
+                              <span>{c.content}</span>
+                              <button
+                                className="px-2 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                                onClick={() => deleteComment(post.id, c.id)}
+                              >
+                                Delete
+                              </button>
+                            </li>
+                          ))
+                        ) : (
+                          <li className="pl-4 border-l-2 border-gray-300">
+                            No comments.
+                          </li>
+                        )}
+                      </ul>
+                    )}
                   </li>
                 ))}
               </ul>
