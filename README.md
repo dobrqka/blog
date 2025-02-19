@@ -138,3 +138,4 @@ npm run dev
 ### Authentication
 
 - `POST /api/login`: User login (JWT authentication)
+- `POST /api/verify-token` : Verify the JWT token
