@@ -4,10 +4,10 @@ This project is a full-stack application that provides a platform for managing c
 
 ## Technologies Used
 
-- Frontend: React, React Router, Tailwind CSS
-- Backend: Node.js, Express.js, Prisma ORM
-- Authentication & Security: JWT (JSON Web Tokens), bcrypt, Passport.js, CORS
-- Database: PostgreSQL
+- **Frontend:** React, React Router, Tailwind CSS
+- **Backend:** Node.js, Express.js, Prisma ORM
+- **Authentication & Security:** JWT (JSON Web Tokens), bcrypt, Passport.js, CORS
+- **Database:** PostgreSQL
 
 ## Features
 
@@ -59,7 +59,13 @@ cd blog
 npm install
 ```
 
-3. Set up your .env file with your database connection string and other configuration details.
+3. Set up your .env files (in /api, /front & /admin) using the .env-templates.
+
+4. Go to the /api folder:
+
+```bash
+cd api
+```
 
 4. Run migrations with Prisma:
 
@@ -71,6 +77,30 @@ npx prisma migrate dev
 
 ```bash
 npm start
+```
+
+6. Access the user frontend:
+
+```bash
+cd ../front
+```
+
+7. Start the front app and access from browser:
+
+```bash
+npm run dev
+```
+
+8. Access the admin dashboard:
+
+```bash
+cd ../admin
+```
+
+9. Start the admin app and access from browser:
+
+```bash
+npm run dev
 ```
 
 ## API endpoints
