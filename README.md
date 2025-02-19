@@ -1,34 +1,48 @@
 # Blog Platform API
 
-A full-stack RESTful blog platform API built with Express.js and Prisma ORM. Supports user authentication, post management, and comment functionality with JWT authentication and bcrypt for password security.
+This project is a full-stack application that provides a platform for managing content. It includes a backend API built with Express.js and Prisma ORM, a frontend built with React, and an admin dashboard for user and content management.
 
 ## Technologies Used
 
-- Express.js: Web framework for building the API.
-- Prisma ORM: Database toolkit for easy and efficient database queries.
-- Passport.js & JWT: Used for secure user authentication.
-- bcrypt: For securely hashing user passwords.
-- PostgreSQL (or another supported database): The database for storing users, posts, and comments.
+- Frontend: React, React Router, Tailwind CSS
+- Backend: Node.js, Express.js, Prisma ORM
+- Authentication & Security: JWT (JSON Web Tokens), bcrypt, Passport.js, CORS
+- Database: PostgreSQL
 
-## Key Features
+## Features
 
-- User authentication with JWT tokens.
-- Admin privileges for managing users, posts, and comments.
-- Post management: Create, update, delete, and fetch posts.
-- Comment management: Add, update, delete, and fetch comments.
-- Role-based access control: Only admins can manage user roles and perform certain actions.
+- User registration and authentication
+- Role-based access control (Admin, User)
+- Content management (CRUD operations for posts and users)
+- Admin dashboard for managing users and content
 
-## Future Plans
+## Frontend
 
-- Frontend Application: A user-facing frontend to display and interact with posts and comments.
-- Admin Dashboard: A separate interface for managing users, posts, and comments.
+The frontend is built with React and allows users to:
+
+- Register and log in
+- View and interact with content
+- Submit and manage their own posts
+
+## Admin Dashboard
+
+The admin dashboard provides additional functionality for administrators:
+
+- View all registered users
+- Manage user roles (promote to admin, delete users)
+- Manage posts (edit, delete)
+- Moderate comments
+
+## Backend
+
+The backend is built with Express.js and Prisma ORM, providing a secure and efficient API for handling authentication, user management, and content operations.
 
 ## Setup
 
 ### Prerequisites
 
 - Node.js
-- PostgreSQL (or any other relational database supported by Prisma)
+- PostgreSQL
 
 ## Installation
 
